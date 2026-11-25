@@ -1,0 +1,10 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/_global-error/page": "/_global-error",
+  "/analytics/page": "/analytics",
+  "/approvals/page": "/approvals",
+  "/dashboard/page": "/dashboard",
+  "/investigation/page": "/investigation",
+  "/page": "/",
+  "/tickets/page": "/tickets"
+}

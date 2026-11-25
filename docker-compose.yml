@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: incidentiq-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://incidentiq:incidentiq_secret@db:5432/incidentiq
+      - MEKO_DATAPACK_ID=incidentiq-core-datapack
+      - MEKO_API_KEY=${MEKO_API_KEY:-}
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: incidentiq-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: incidentiq-db
+    environment:
+      - POSTGRES_USER=incidentiq
+      - POSTGRES_PASSWORD=incidentiq_secret
+      - POSTGRES_DB=incidentiq
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

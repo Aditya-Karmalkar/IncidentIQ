@@ -1,0 +1,148 @@
+{
+  "timestamp": "2026-11-21T06:34:00.023359+00:00",
+  "sample_size": 6,
+  "mode_a_baseline": {
+    "name": "Mode A (Zero Shared Memory)",
+    "avg_total_tokens": 1928.0,
+    "avg_latency_ms": 1920.8,
+    "avg_quality_score": 91.8,
+    "knowledge_reuse_pct": 0.0,
+    "runs": [
+      {
+        "ticket_id": "inc-db-001",
+        "category": "Database Connection Failures",
+        "total_tokens": 1884,
+        "input_tokens": 1304,
+        "output_tokens": 580,
+        "execution_time_ms": 1875.0,
+        "quality_score": 88.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-db-002",
+        "category": "Database Connection Failures",
+        "total_tokens": 1898,
+        "input_tokens": 1283,
+        "output_tokens": 615,
+        "execution_time_ms": 1817.5,
+        "quality_score": 89.5,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-pay-001",
+        "category": "Payment Processing Errors",
+        "total_tokens": 1990,
+        "input_tokens": 1340,
+        "output_tokens": 650,
+        "execution_time_ms": 1922.5,
+        "quality_score": 91.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-pay-002",
+        "category": "Payment Processing Errors",
+        "total_tokens": 1965,
+        "input_tokens": 1280,
+        "output_tokens": 685,
+        "execution_time_ms": 2065.0,
+        "quality_score": 92.5,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-rate-001",
+        "category": "API Rate Limiting",
+        "total_tokens": 1875,
+        "input_tokens": 1295,
+        "output_tokens": 580,
+        "execution_time_ms": 2082.5,
+        "quality_score": 94.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-rate-002",
+        "category": "API Rate Limiting",
+        "total_tokens": 1955,
+        "input_tokens": 1340,
+        "output_tokens": 615,
+        "execution_time_ms": 1762.5,
+        "quality_score": 95.5,
+        "knowledge_reused": 0
+      }
+    ]
+  },
+  "mode_b_meko": {
+    "name": "Mode B (IncidentIQ with Meko)",
+    "avg_total_tokens": 944.0,
+    "avg_latency_ms": 787.6,
+    "avg_quality_score": 94.2,
+    "knowledge_reuse_pct": 50.0,
+    "runs": [
+      {
+        "ticket_id": "inc-db-001",
+        "category": "Database Connection Failures",
+        "total_tokens": 1246,
+        "input_tokens": 856,
+        "output_tokens": 390,
+        "execution_time_ms": 1111.0,
+        "quality_score": 92.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-db-002",
+        "category": "Database Connection Failures",
+        "total_tokens": 661,
+        "input_tokens": 426,
+        "output_tokens": 235,
+        "execution_time_ms": 493.6,
+        "quality_score": 96.5,
+        "knowledge_reused": 1
+      },
+      {
+        "ticket_id": "inc-pay-001",
+        "category": "Payment Processing Errors",
+        "total_tokens": 1210,
+        "input_tokens": 820,
+        "output_tokens": 390,
+        "execution_time_ms": 1052.5,
+        "quality_score": 92.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-pay-002",
+        "category": "Payment Processing Errors",
+        "total_tokens": 675,
+        "input_tokens": 440,
+        "output_tokens": 235,
+        "execution_time_ms": 516.0,
+        "quality_score": 96.5,
+        "knowledge_reused": 1
+      },
+      {
+        "ticket_id": "inc-rate-001",
+        "category": "API Rate Limiting",
+        "total_tokens": 1210,
+        "input_tokens": 820,
+        "output_tokens": 390,
+        "execution_time_ms": 1052.5,
+        "quality_score": 92.0,
+        "knowledge_reused": 0
+      },
+      {
+        "ticket_id": "inc-rate-002",
+        "category": "API Rate Limiting",
+        "total_tokens": 665,
+        "input_tokens": 430,
+        "output_tokens": 235,
+        "execution_time_ms": 500.0,
+        "quality_score": 96.5,
+        "knowledge_reused": 1
+      }
+    ]
+  },
+  "comparative_gains": {
+    "token_reduction_pct": 51.0,
+    "latency_reduction_pct": 59.0,
+    "quality_improvement_pts": 2.4,
+    "knowledge_reuse_rate_pct": 50.0
+  }
+}

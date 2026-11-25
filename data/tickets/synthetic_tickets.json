@@ -1,0 +1,322 @@
+[
+  {
+    "id": "inc-db-001",
+    "title": "HikariCP Connection Pool Exhaustion on Checkout Service",
+    "description": "Production checkout API latency spiked to 14,000ms. HikariPool-1 throws ConnectionTimeout: Connection is not available, request timed out after 30005ms (active=50, idle=0, waiting=124). Postgres max_connections limit not breached, but pool size is clamped at 50.",
+    "category": "Database Connection Failures",
+    "severity": "critical",
+    "target_fingerprint": "database:pool_exhaustion:hikari",
+    "reference_root_cause": "Unbounded read transactions in checkout reconciliation batch worker holding pool connections open without releasing them, starving customer checkout threads.",
+    "reference_solution": "1. Set hikari.leak-detection-threshold=2000ms. 2. Isolate batch reconciliation to dedicated read-only pool. 3. Increase max-pool-size to 100 with connection-timeout=5000ms."
+  },
+  {
+    "id": "inc-db-002",
+    "title": "Postgres connection dropouts during midnight invoice reconciliation",
+    "description": "Nightly billing job hangs with 'FATAL: sorry, too many clients already' and Hikari reports connection unavailable after 30s timeout. Threads waiting exceeds 80.",
+    "category": "Database Connection Failures",
+    "severity": "high",
+    "target_fingerprint": "database:pool_exhaustion:hikari",
+    "reference_root_cause": "Batch reconciliation worker holding connections across multi-statement transaction loop without connection pooling ceiling.",
+    "reference_solution": "1. Separate batch worker onto dedicated secondary connection pool. 2. Enable connection leak detection at 2000ms. 3. Bound pool size."
+  },
+  {
+    "id": "inc-pay-001",
+    "title": "Stripe 504 Gateway Timeout on Capture API",
+    "description": "Payment authorization succeeds but capture endpoint fails intermittently with 504 Gateway Timeout during peak flash sale. Customer accounts charged twice when front-end retried without Idempotency-Key.",
+    "category": "Payment Processing Errors",
+    "severity": "critical",
+    "target_fingerprint": "payment:stripe_gateway_timeout:capture",
+    "reference_root_cause": "Synchronous capture call in web request handler times out after 10s default gateway timeout; lack of deterministic client-side idempotency keys triggers duplicate capture attempts on retry.",
+    "reference_solution": "1. Mandate UUIDv4 Idempotency-Key header on all Stripe capture requests. 2. Offload capture to background queue with exponential backoff (initial=1s, max=30s, max_retries=5). 3. Set gateway timeout to 25s."
+  },
+  {
+    "id": "inc-pay-002",
+    "title": "Payment capture timeouts and double debit reports on mobile app",
+    "description": "Mobile app users report seeing double debits after spinner hung for 15 seconds. Stripe API logs show HTTP 504 on POST /v1/payment_intents/capture followed by an immediate duplicate request from app.",
+    "category": "Payment Processing Errors",
+    "severity": "critical",
+    "target_fingerprint": "payment:stripe_gateway_timeout:capture",
+    "reference_root_cause": "Synchronous payment capture timeout causes client retry storm without unique idempotency key header.",
+    "reference_solution": "1. Pass persistent Idempotency-Key header per transaction UUID. 2. Move capture execution into idempotent asynchronous queue worker."
+  },
+  {
+    "id": "inc-rate-001",
+    "title": "Public Catalog API returning HTTP 429 Too Many Requests to partner integrations",
+    "description": "Wholesale partners report catalog sync failed with 429 status code. Rate limit redis token bucket drained unexpectedly because cluster replica lag dropped key expiry TTLs.",
+    "category": "API Rate Limiting",
+    "severity": "high",
+    "target_fingerprint": "rate_limit:rate_limited:token_bucket",
+    "reference_root_cause": "Sliding window token bucket rate limiter in Redis cluster suffered from missing EXPIRE TTL on key renewal during replica failover, causing burst limit to lock indefinitely at 0 capacity.",
+    "reference_solution": "1. Use atomic Lua script for GET+INCR+EXPIRE in Redis rate limiter. 2. Implement client header retry-after with jitter. 3. Expand tier 2 partner quota from 500 req/min to 2500 req/min."
+  },
+  {
+    "id": "inc-rate-002",
+    "title": "Partner sync job blocked by continuous 429 Too Many Requests response",
+    "description": "B2B catalog ingestion agent receiving 429 errors continuously for 2 hours. Redis rate limiter bucket is stuck at zero available tokens despite partner pausing requests.",
+    "category": "API Rate Limiting",
+    "severity": "medium",
+    "target_fingerprint": "rate_limit:rate_limited:token_bucket",
+    "reference_root_cause": "Rate limit redis keys failed to expire due to non-atomic key setting without TTL during failover.",
+    "reference_solution": "1. Apply atomic Lua script rate-limiting script with mandatory TTL. 2. Flush stuck partner rate limiter keys."
+  },
+  {
+    "id": "inc-auth-001",
+    "title": "JWT Signature Verification Failure after Auth0 Key Rotation",
+    "description": "All microservices rejecting inbound user bearer tokens with 'jwt.exceptions.InvalidSignatureError: Signature verification failed'. Happened 10 minutes after scheduled JWKS key rotation.",
+    "category": "Authentication Failures",
+    "severity": "critical",
+    "target_fingerprint": "auth:auth_token_drift:jwks_rotation",
+    "reference_root_cause": "API gateway cached JWKS public keys in memory for 24 hours without cache invalidation on unknown 'kid' (Key ID), rejecting valid tokens signed with newly rotated private key.",
+    "reference_solution": "1. Implement cache refresh fallback in JWKS client: when token kid is not in cache, trigger immediate JWKS endpoint fetch before failing. 2. Set max cache TTL to 1 hour."
+  },
+  {
+    "id": "inc-auth-002",
+    "title": "User login failures: Invalid token signature across frontend services",
+    "description": "Users are booted to login page with 'Signature verification failed' message. Auth0 logs confirm new key ID kid=2026-q4 active, but gateway service uses old kid=2026-q3.",
+    "category": "Authentication Failures",
+    "severity": "critical",
+    "target_fingerprint": "auth:auth_token_drift:jwks_rotation",
+    "reference_root_cause": "Gateway JWKS key cache does not refresh when encountering an unseen kid header.",
+    "reference_solution": "1. Configure JWKS fetch-on-cache-miss hook. 2. Invalidate stale in-memory key cache."
+  },
+  {
+    "id": "inc-cfg-001",
+    "title": "Cross-Origin Request Blocked (CORS) on Staging Webhooks Endpoint",
+    "description": "Merchant dashboard cannot trigger test webhooks: 'Access to fetch at https://api-stg.internal.io from origin https://merchant-stg.app has been blocked by CORS policy: No Access-Control-Allow-Origin header is present'.",
+    "category": "Configuration Problems",
+    "severity": "medium",
+    "target_fingerprint": "config:cors_origin_mismatch:allowed_origins",
+    "reference_root_cause": "FastAPI CORSMiddleware regex pattern omitted subdomain wildcard for staging environments (*.merchant-stg.app).",
+    "reference_solution": "1. Update allow_origin_regex in CORS middleware to r'https://.*\\.merchant-stg\\.app'. 2. Explicitly include Access-Control-Allow-Credentials and required headers."
+  },
+  {
+    "id": "inc-cfg-002",
+    "title": "Merchant portal CORS failure when submitting test webhook dispatch",
+    "description": "Preflight OPTIONS request returns 403 Forbidden with CORS origin missing on staging webhook console.",
+    "category": "Configuration Problems",
+    "severity": "medium",
+    "target_fingerprint": "config:cors_origin_mismatch:allowed_origins",
+    "reference_root_cause": "CORS origin configuration strictly lists production domains only and blocks staging subdomains.",
+    "reference_solution": "1. Add staging domain wildcard pattern to CORSMiddleware. 2. Verify OPTIONS 200 preflight status."
+  },
+  {
+    "id": "inc-int-001",
+    "title": "SendGrid Webhook Signature Verification Dropping Order Notifications",
+    "description": "Inbound order confirmation emails dropping silently. SendGrid webhook listener logs: 'ECDSA signature verification failed for X-Twilio-Email-Event-Webhook-Signature'.",
+    "category": "Third-party Integration Errors",
+    "severity": "high",
+    "target_fingerprint": "integration:auth_token_drift:sendgrid_ecdsa",
+    "reference_root_cause": "Webhook body parser in middleware consumed raw stream as parsed JSON before passing to SendGrid cryptographic signature validator, modifying newline byte representations.",
+    "reference_solution": "1. Capture raw unparsed byte buffer req.rawBody prior to JSON parsing middleware. 2. Pass raw bytes directly to EventWebhook.verifySignature()."
+  },
+  {
+    "id": "inc-int-002",
+    "title": "Email delivery events failing signature check on ingest server",
+    "description": "Customer notification status not updating. Error log shows SendGrid event signature mismatch on all inbound POST payloads.",
+    "category": "Third-party Integration Errors",
+    "severity": "high",
+    "target_fingerprint": "integration:auth_token_drift:sendgrid_ecdsa",
+    "reference_root_cause": "Raw payload string was modified by JSON parsing middleware before cryptographic validation.",
+    "reference_solution": "1. Use raw request body buffer for SendGrid ECDSA verification. 2. Prevent body mutation before verification."
+  },
+  {
+    "id": "inc-db-003",
+    "title": "PostgreSQL Deadlock detected on inventory reservation table",
+    "description": "Concurrent cart checkout threads throw 'deadlock detected: Process 4123 waits for ShareLock on transaction; Process 4124 waits for ExclusiveLock'. HTTP 500 returned to 12% of buyers.",
+    "category": "Database Connection Failures",
+    "severity": "high",
+    "target_fingerprint": "database:deadlock:inventory_sharelock",
+    "reference_root_cause": "Cart service locks multiple SKU rows in arbitrary order (SKU B then SKU A in thread 1, SKU A then SKU B in thread 2) inside concurrent transactions.",
+    "reference_solution": "1. Enforce strict alphabetical SKU ID sorting before acquiring SELECT FOR UPDATE locks. 2. Set statement_timeout = 3000ms."
+  },
+  {
+    "id": "inc-db-004",
+    "title": "Inventory checkout transaction deadlock under high concurrency",
+    "description": "Flash sale spikes cause deadlock errors on sku_inventory row updates. Transactions roll back with Error 40P01.",
+    "category": "Database Connection Failures",
+    "severity": "high",
+    "target_fingerprint": "database:deadlock:inventory_sharelock",
+    "reference_root_cause": "Inconsistent lock acquisition ordering between concurrent reservation queries.",
+    "reference_solution": "1. Sort items by SKU ascending before executing SELECT ... FOR UPDATE. 2. Implement application retry with jitter."
+  },
+  {
+    "id": "inc-pay-003",
+    "title": "Currency Conversion Rounding Drift on Multi-Currency Invoices",
+    "description": "EUR and JPY settlements off by 1 cent/yen compared to payment provider total, causing accounting ledger reconciliation freeze.",
+    "category": "Payment Processing Errors",
+    "severity": "medium",
+    "target_fingerprint": "payment:rounding_drift:currency_fraction",
+    "reference_root_cause": "Floating-point IEEE-754 arithmetic used instead of Decimal fixed-point integers in currency calculation module.",
+    "reference_solution": "1. Convert all monetary calculations to integer lowest denomination (cents/yen). 2. Use Decimal with ROUND_HALF_EVEN."
+  },
+  {
+    "id": "inc-pay-004",
+    "title": "Cross-border settlement discrepancy due to float point rounding",
+    "description": "Financial ledger reports mismatch of €0.01 on order payouts for European customers.",
+    "category": "Payment Processing Errors",
+    "severity": "medium",
+    "target_fingerprint": "payment:rounding_drift:currency_fraction",
+    "reference_root_cause": "Float representations in tax and currency multiplier functions creating decimal drift.",
+    "reference_solution": "1. Adopt integer cents for all intermediate accounting steps. 2. Use Python decimal module with banker's rounding."
+  },
+  {
+    "id": "inc-rate-003",
+    "title": "GraphQL Depth-Limit Throttling False Positives on Order History Query",
+    "description": "Admin customer care portal receives HTTP 429 / QueryRejected: Query exceeds maximum allowed complexity score of 250 on nested customer orders query.",
+    "category": "API Rate Limiting",
+    "severity": "medium",
+    "target_fingerprint": "rate_limit:rate_limited:graphql_complexity",
+    "reference_root_cause": "Complexity cost multiplier counted union fragment types twice on customer profile sub-fields.",
+    "reference_solution": "1. Fix GraphQL complexity calculator to deduplicate union type fields. 2. Increase authenticated admin threshold to 500."
+  },
+  {
+    "id": "inc-rate-004",
+    "title": "Admin dashboard customer order lookup rejected by complexity limiter",
+    "description": "Support reps cannot view customer profiles due to GraphQL complexity error 429.",
+    "category": "API Rate Limiting",
+    "severity": "medium",
+    "target_fingerprint": "rate_limit:rate_limited:graphql_complexity",
+    "reference_root_cause": "Fragment deduplication bug in query cost scoring algorithm.",
+    "reference_solution": "1. Deduplicate type fragment scoring in GraphQL middleware. 2. Whitelist support role complexity tier."
+  },
+  {
+    "id": "inc-auth-003",
+    "title": "OAuth2 State Parameter Mismatch during SSO Callback",
+    "description": "Okta SSO users receive 'HTTP 400 invalid_grant: state parameter mismatch' after authenticating via mobile Safari.",
+    "category": "Authentication Failures",
+    "severity": "high",
+    "target_fingerprint": "auth:auth_token_drift:oauth_state_cookie",
+    "reference_root_cause": "SameSite=Lax cookie attribute dropped on cross-site redirect in Safari Intelligent Tracking Prevention (ITP).",
+    "reference_solution": "1. Set SameSite=None and Secure=True on the OAuth state cookie. 2. Use partition-aware cookie headers for embedded webviews."
+  },
+  {
+    "id": "inc-auth-004",
+    "title": "Corporate SSO login failing on Safari due to state parameter error",
+    "description": "Enterprise customers on iOS devices cannot log in via Okta. Error log notes missing state cookie in callback handler.",
+    "category": "Authentication Failures",
+    "severity": "high",
+    "target_fingerprint": "auth:auth_token_drift:oauth_state_cookie",
+    "reference_root_cause": "Safari ITP cookie suppression on cross-origin redirects without SameSite=None; Secure.",
+    "reference_solution": "1. Configure SameSite=None; Secure for OAuth session cookies. 2. Enable PKCE verification as secondary verification."
+  },
+  {
+    "id": "inc-cfg-003",
+    "title": "Kafka Consumer Group Rebalance Storm on Log Ingest Topic",
+    "description": "Log collector pods crashing with 'CommitFailedException: The max.poll.interval.ms elapsed before consumer invoked poll'. Triggers cascading rebalance storm.",
+    "category": "Configuration Problems",
+    "severity": "critical",
+    "target_fingerprint": "config:kafka_partition_lag:poll_interval",
+    "reference_root_cause": "Heavy batch parsing inside consumer loop exceeded max.poll.interval.ms (30000ms), causing Kafka broker to consider consumer dead and trigger rebalance.",
+    "reference_solution": "1. Increase max.poll.interval.ms to 300000ms (5 min). 2. Decrease max.poll.records from 500 to 100. 3. Offload document parsing to worker thread pool."
+  },
+  {
+    "id": "inc-cfg-004",
+    "title": "Event stream consumer disconnects and infinite rebalance cycle",
+    "description": "Analytics worker nodes dropping from consumer group continuously, lagging behind topic offsets by 4 million records.",
+    "category": "Configuration Problems",
+    "severity": "critical",
+    "target_fingerprint": "config:kafka_partition_lag:poll_interval",
+    "reference_root_cause": "Processing time for large JSON payloads exceeding Kafka heartbeat poll interval.",
+    "reference_solution": "1. Reduce max.poll.records to 100. 2. Set max.poll.interval.ms to 300s. 3. Decouple record polling from heavy CPU processing."
+  },
+  {
+    "id": "inc-int-003",
+    "title": "Cloudflare Cache Purge API 400 Bad Request on Wildcard URL",
+    "description": "Content publishing service fails with 'Cloudflare API error 1012: purge_everything or url prefixes required'. CDN continues serving stale article content.",
+    "category": "Third-party Integration Errors",
+    "severity": "medium",
+    "target_fingerprint": "integration:cache_purge:cloudflare_wildcard",
+    "reference_root_cause": "Cloudflare purge API v4 changed wildcard syntax from 'https://example.com/posts/*' to require 'prefixes' array payload rather than 'files' parameter.",
+    "reference_solution": "1. Use {'prefixes': ['posts/']} payload for enterprise zone purge instead of wildcard asterisks. 2. Verify API token contains Zone.Cache Purge permission."
+  },
+  {
+    "id": "inc-int-004",
+    "title": "Stale CDN content after editorial publish: Cloudflare purge rejection",
+    "description": "Writers updating homepages do not see updates reflected on edge caches. Purge endpoint returns HTTP 400.",
+    "category": "Third-party Integration Errors",
+    "severity": "medium",
+    "target_fingerprint": "integration:cache_purge:cloudflare_wildcard",
+    "reference_root_cause": "Improper payload structure passed to Cloudflare Cache Purge API endpoint.",
+    "reference_solution": "1. Switch purge payload to 'prefixes' schema. 2. Add automated cache header verification."
+  },
+  {
+    "id": "inc-db-005",
+    "title": "Redis OOM Command Not Allowed when used_memory > maxmemory",
+    "description": "Session store service returns 'OOM command not allowed when used memory > maxmemory'. All user session writes failing with HTTP 500.",
+    "category": "Database Connection Failures",
+    "severity": "critical",
+    "target_fingerprint": "database:memory_oom:redis_maxmemory",
+    "reference_root_cause": "Redis maxmemory-policy was left at default 'noeviction' instead of 'volatile-lru' or 'allkeys-lru', preventing expired session cleanup under memory pressure.",
+    "reference_solution": "1. Set redis maxmemory-policy allkeys-lru. 2. Run CONFIG SET maxmemory-policy allkeys-lru immediately. 3. Audit keys for explicit TTLs."
+  },
+  {
+    "id": "inc-db-006",
+    "title": "Session management crash due to Redis out of memory error",
+    "description": "Users cannot stay logged in. Redis logs reveal memory full and writes blocked under noeviction rule.",
+    "category": "Database Connection Failures",
+    "severity": "critical",
+    "target_fingerprint": "database:memory_oom:redis_maxmemory",
+    "reference_root_cause": "Redis eviction policy set to noeviction under high key volume.",
+    "reference_solution": "1. Configure maxmemory-policy to allkeys-lru. 2. Enforce 7-day TTL on session tokens."
+  },
+  {
+    "id": "inc-pay-005",
+    "title": "3D Secure 2.0 Webhook Friction Failure on Adyen Integration",
+    "description": "European credit card payments hanging on CHALLENGE_SHOPPER status without resolving to AUTHORISED. Conversion dropped 35%.",
+    "category": "Payment Processing Errors",
+    "severity": "high",
+    "target_fingerprint": "payment:3ds_friction:adyen_challenge",
+    "reference_root_cause": "Frontend checkout component dropped the threeDSMethodData hidden iframe required for frictionless risk assessment, forcing full manual challenge on every card.",
+    "reference_solution": "1. Embed Adyen 3DS2 device fingerprinting iframe during card entry. 2. Handle challengeResult notification in returnUrl."
+  },
+  {
+    "id": "inc-pay-006",
+    "title": "Excessive 3DS verification challenges causing checkout abandonment",
+    "description": "Customers reporting repetitive SMS security codes on small purchases. Payment gateway logs frictionless flow disabled.",
+    "category": "Payment Processing Errors",
+    "severity": "high",
+    "target_fingerprint": "payment:3ds_friction:adyen_challenge",
+    "reference_root_cause": "Missing device fingerprint payload in initial authorization request.",
+    "reference_solution": "1. Reinstate device fingerprint collection script on checkout page. 2. Pass shopper fingerprint string to gateway."
+  },
+  {
+    "id": "inc-rate-005",
+    "title": "AWS SES Email Sending Rate Exceeded 454 Throttling Failure",
+    "description": "Password reset emails delayed by up to 45 minutes. SES SMTP logs: '454 Throttling failure: Maximum sending rate exceeded'.",
+    "category": "API Rate Limiting",
+    "severity": "high",
+    "target_fingerprint": "rate_limit:rate_limited:aws_ses_throttle",
+    "reference_root_cause": "Transactional email sender fired unbuffered asynchronous tasks exceeding account limit of 50 emails/second during newsletter blast.",
+    "reference_solution": "1. Separate marketing and transactional email traffic into dedicated configuration sets. 2. Implement SQS queue with rate-limited consumer at 40 msg/sec."
+  },
+  {
+    "id": "inc-rate-006",
+    "title": "Password reset queue backlogged due to email provider rate limit",
+    "description": "Users complain verification emails taking an hour to arrive. SES logs show 454 Throttling errors.",
+    "category": "API Rate Limiting",
+    "severity": "high",
+    "target_fingerprint": "rate_limit:rate_limited:aws_ses_throttle",
+    "reference_root_cause": "Unthrottled parallel email dispatch exceeding provider burst limits.",
+    "reference_solution": "1. Route transactional emails via isolated high-priority rate-limited queue. 2. Request SES quota increase."
+  },
+  {
+    "id": "inc-auth-005",
+    "title": "Kubernetes Ingress TLS Certificate Expired on Internal Microservice",
+    "description": "Payment worker unable to contact inventory service: 'x509: certificate has expired or is not yet valid'. cert-manager failed to renew Let's Encrypt certificate.",
+    "category": "Authentication Failures",
+    "severity": "critical",
+    "target_fingerprint": "auth:tls_cert_drift:cert_manager_x509",
+    "reference_root_cause": "Cert-manager ClusterIssuer ACME HTTP01 challenge failed because ingress routing rule intercepted .well-known/acme-challenge requests.",
+    "reference_solution": "1. Whitelist /.well-known/acme-challenge/* path in root ingress controller. 2. Trigger cert-manager certificate renew manually. 3. Add alerting at 14 days before expiry."
+  },
+  {
+    "id": "inc-auth-006",
+    "title": "SSL handshake failure between internal services after certificate expiry",
+    "description": "Internal REST calls fail with TLS error x509 expired certificate. Cluster cert-manager not updating pods.",
+    "category": "Authentication Failures",
+    "severity": "critical",
+    "target_fingerprint": "auth:tls_cert_drift:cert_manager_x509",
+    "reference_root_cause": "ACME HTTP01 challenge blocked by API gateway path routing.",
+    "reference_solution": "1. Ensure ACME challenge route bypasses application auth middleware. 2. Force cert-manager renewal."
+  }
+]

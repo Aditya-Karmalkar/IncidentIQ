@@ -1,0 +1,105 @@
+[
+  {
+    "id": "rb-db-pool",
+    "category": "Database Connection Failures",
+    "title": "HikariCP & PostgreSQL Connection Pool Troubleshooting Runbook",
+    "fingerprint": "database:pool_exhaustion:hikari",
+    "symptoms": ["Connection is not available", "request timed out after 30000ms", "active=50", "FATAL: sorry, too many clients already"],
+    "root_cause": "Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "solution_steps": [
+      "1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.",
+      "2. Separate bulk batch processing jobs from low-latency web request pools.",
+      "3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.",
+      "4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states."
+    ],
+    "verification_checks": [
+      "Confirm pool active connections drop below 70% under peak load.",
+      "No ConnectionTimeout exceptions in application logs over 15 minutes."
+    ]
+  },
+  {
+    "id": "rb-stripe-timeout",
+    "category": "Payment Processing Errors",
+    "title": "Payment Gateway 504 Timeout & Idempotency Runbook",
+    "fingerprint": "payment:stripe_gateway_timeout:capture",
+    "symptoms": ["504 Gateway Timeout", "double debit", "idempotency", "capture_timeout"],
+    "root_cause": "Synchronous payment gateway calls in HTTP thread without unique idempotency headers, causing retry storms and duplicate charges.",
+    "solution_steps": [
+      "1. Mandate persistent Idempotency-Key header on all payment capture and charge requests.",
+      "2. Offload payment capture execution to asynchronous worker with exponential backoff and jitter.",
+      "3. Configure client-side button debounce to prevent multiple customer clicks."
+    ],
+    "verification_checks": [
+      "Confirm all payment requests carry Idempotency-Key.",
+      "Zero duplicate charge alerts in Stripe dashboard."
+    ]
+  },
+  {
+    "id": "rb-rate-limit",
+    "category": "API Rate Limiting",
+    "title": "Distributed Rate Limiter Redis Recovery Runbook",
+    "fingerprint": "rate_limit:rate_limited:token_bucket",
+    "symptoms": ["HTTP 429", "Too Many Requests", "token bucket", "rate limit"],
+    "root_cause": "Atomic TTL omission on rate limit counters in Redis causing permanent token bucket lockouts.",
+    "solution_steps": [
+      "1. Implement single atomic Lua script for GET + INCR + EXPIRE.",
+      "2. Provide Retry-After header with seconds remaining in response.",
+      "3. Flush corrupted rate limit keys for affected client accounts."
+    ],
+    "verification_checks": [
+      "Inspect Redis TTL on newly incremented rate limit keys to confirm > 0.",
+      "Partners receive HTTP 200 after Retry-After window."
+    ]
+  },
+  {
+    "id": "rb-auth-jwks",
+    "category": "Authentication Failures",
+    "title": "JWKS Key Rotation & Signature Drift Runbook",
+    "fingerprint": "auth:auth_token_drift:jwks_rotation",
+    "symptoms": ["Signature verification failed", "InvalidSignatureError", "kid not found"],
+    "root_cause": "Stale in-memory cache of Identity Provider public keys rejecting tokens signed with newly rotated keys.",
+    "solution_steps": [
+      "1. Configure JWKS client to refresh keys on unseen Key ID (kid) cache miss before rejecting.",
+      "2. Set maximum JWKS cache TTL to 1 hour with proactive rotation background sync.",
+      "3. Verify clock skew tolerance is set to at least 60 seconds."
+    ],
+    "verification_checks": [
+      "Simulate token with new kid and verify gateway dynamically fetches fresh JWKS.",
+      "Token authentication success rate returns to 100%."
+    ]
+  },
+  {
+    "id": "rb-cors-origin",
+    "category": "Configuration Problems",
+    "title": "CORS Preflight & Origin Wildcard Troubleshooting Runbook",
+    "fingerprint": "config:cors_origin_mismatch:allowed_origins",
+    "symptoms": ["No Access-Control-Allow-Origin header is present", "CORS policy blocked", "preflight 403"],
+    "root_cause": "CORSMiddleware configuration missing environment subdomains or failing to handle OPTIONS preflight.",
+    "solution_steps": [
+      "1. Configure regex pattern allow_origin_regex for legitimate environment subdomains.",
+      "2. Ensure Access-Control-Allow-Methods, Headers, and Credentials are explicitly returned.",
+      "3. Verify proxy servers (Nginx/Cloudflare) do not strip preflight CORS response headers."
+    ],
+    "verification_checks": [
+      "Execute curl -X OPTIONS with Origin header and verify Access-Control-Allow-Origin reflects origin.",
+      "Preflight returns HTTP 200."
+    ]
+  },
+  {
+    "id": "rb-int-sendgrid",
+    "category": "Third-party Integration Errors",
+    "title": "SendGrid Webhook Cryptographic Verification Runbook",
+    "fingerprint": "integration:auth_token_drift:sendgrid_ecdsa",
+    "symptoms": ["ECDSA signature verification failed", "X-Twilio-Email-Event-Webhook-Signature", "webhook dropped"],
+    "root_cause": "Express or FastAPI JSON parsing middleware mutating request body before ECDSA signature verification.",
+    "solution_steps": [
+      "1. Capture raw unparsed byte buffer from incoming HTTP request before JSON deserialization.",
+      "2. Pass raw payload bytes directly into cryptographic signature validation routine.",
+      "3. Reject unauthenticated payloads with HTTP 401."
+    ],
+    "verification_checks": [
+      "Send test signed webhook from SendGrid console and verify HTTP 200 acceptance.",
+      "Event logs process webhook notifications without cryptographic errors."
+    ]
+  }
+]

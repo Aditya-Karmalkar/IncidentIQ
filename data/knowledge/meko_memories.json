@@ -1,0 +1,363 @@
+[
+  {
+    "id": "meko-mem-ba67af06",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-10313926] [Reused from Memory meko-mem-fc048dc7] [Reused from Memory meko-mem-8b23c41f] [Reused from Memory meko-mem-69450625] [Reused from Memory meko-mem-613aea46] [Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-10313926)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-fc048dc7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-8b23c41f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-69450625)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-613aea46)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-f3e6d5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-440d5d` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-252985` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-ba6865` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-475eb5` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-15f876",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:33:59.932731+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:33:59.932731+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-4948891c",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: Distributed Rate Limiter Redis Recovery Runbook",
+    "root_cause": "Atomic TTL omission on rate limit counters in Redis causing permanent token bucket lockouts.",
+    "recommended_solution": "1. Implement single atomic Lua script for GET + INCR + EXPIRE.\n2. Provide Retry-After header with seconds remaining in response.\n3. Flush corrupted rate limit keys for affected client accounts.",
+    "category": "API Rate Limiting",
+    "fingerprint": "rate_limit:rate_limited:token_bucket",
+    "source_ticket_id": "inc-seed-rb-rate-limit",
+    "approved_by": "Principal SRE",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:33:59.760500+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:33:59.760500+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-2de905b7",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: Payment Gateway 504 Timeout & Idempotency Runbook",
+    "root_cause": "Synchronous payment gateway calls in HTTP thread without unique idempotency headers, causing retry storms and duplicate charges.",
+    "recommended_solution": "1. Mandate persistent Idempotency-Key header on all payment capture and charge requests.\n2. Offload payment capture execution to asynchronous worker with exponential backoff and jitter.\n3. Configure client-side button debounce to prevent multiple customer clicks.",
+    "category": "Payment Processing Errors",
+    "fingerprint": "payment:stripe_gateway_timeout:capture",
+    "source_ticket_id": "inc-seed-rb-stripe-timeout",
+    "approved_by": "Principal SRE",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:33:59.739452+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:33:59.739452+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-60498e24",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariCP & PostgreSQL Connection Pool Troubleshooting Runbook",
+    "root_cause": "Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database:pool_exhaustion:hikari",
+    "source_ticket_id": "inc-seed-rb-db-pool",
+    "approved_by": "Principal SRE",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:33:59.737624+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:33:59.737624+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-10313926",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-fc048dc7] [Reused from Memory meko-mem-8b23c41f] [Reused from Memory meko-mem-69450625] [Reused from Memory meko-mem-613aea46] [Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-fc048dc7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-8b23c41f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-69450625)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-613aea46)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-f3e6d5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-440d5d` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-252985` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-ba6865` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-475eb5",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:27:03.990077+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:27:03.990077+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-fc048dc7",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-8b23c41f] [Reused from Memory meko-mem-69450625] [Reused from Memory meko-mem-613aea46] [Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-8b23c41f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-69450625)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-613aea46)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-f3e6d5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-440d5d` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-252985` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-ba6865",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-21T06:07:25.359338+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T06:07:25.359338+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-8b23c41f",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-69450625] [Reused from Memory meko-mem-613aea46] [Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-69450625)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-613aea46)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-f3e6d5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-440d5d` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-252985",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-21T05:41:39.623387+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T05:41:39.623387+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-69450625",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-613aea46] [Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-613aea46)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-f3e6d5` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-440d5d",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-21T05:21:33.837249+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-21T05:21:33.837249+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-613aea46",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-b77a4528] [Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-b77a4528)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-831e47` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-f3e6d5",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T15:29:03.329941+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T15:29:03.329941+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-b77a4528",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-ea05a45c] [Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-ea05a45c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-de642f` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-831e47",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T15:12:42.533450+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T15:12:42.533450+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-ea05a45c",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-a6758ced] [Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-a6758ced)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-b34a25` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-de642f",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T15:11:07.661437+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T15:11:07.661437+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-a6758ced",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-443aa89f] [Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-443aa89f)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-4c252b` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-b34a25",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T13:39:46.324807+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T13:39:46.324807+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-443aa89f",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-a24eecd7] [Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-a24eecd7)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-a1f7e2` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-4c252b",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:55:30.038315+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:55:30.038315+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-a24eecd7",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-dd36511c] [Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-dd36511c)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-81757b` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-a1f7e2",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:28:03.083949+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:28:03.083949+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-dd36511c",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-f92afbd8] [Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-f92afbd8)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-521fa5` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-81757b",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:14:38.672402+00:00",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:14:38.672402+00:00"
+    }
+  },
+  {
+    "id": "meko-mem-f92afbd8",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-990b9178] [Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-990b9178)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-570563` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-521fa5",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:13:20.928051",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:13:20.928051"
+    }
+  },
+  {
+    "id": "meko-mem-990b9178",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-6817ee86] [Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-6817ee86)\n\n### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.\n\n**Historical Provenance:** Originally verified for ticket `inc-882fc9` by `Senior SRE Alex`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-570563",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:12:35.995440",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:12:35.995440"
+    }
+  },
+  {
+    "id": "meko-mem-6817ee86",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: HikariPool checkout connection timeout",
+    "root_cause": "[Reused from Memory meko-mem-15e5ec4f] Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Verified Remediation Protocol (Meko Memory ID: meko-mem-15e5ec4f)\n\n### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.\n\n**Historical Provenance:** Originally verified for ticket `inc-bae1d9` by `Test SRE`. Cross-session confidence match: 99%.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-882fc9",
+    "approved_by": "Senior SRE Alex",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:11:54.363464",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:11:54.363464"
+    }
+  },
+  {
+    "id": "meko-mem-15e5ec4f",
+    "datapack_id": "incidentiq-core-datapack",
+    "title": "Verified Protocol: Test Hikari leak",
+    "root_cause": "Systematic failure in Database Connection Failures: Long-running batch queries, uncommitted transaction leaks, or undersized pool configurations exhausting database connection ceiling.",
+    "recommended_solution": "### Operational Runbook Remediation (rb-db-pool)\n\n1. Enable leak-detection-threshold at 2000ms to log connection stack traces held open longer than 2s.\n2. Separate bulk batch processing jobs from low-latency web request pools.\n3. Adjust max-pool-size and configure idle-timeout to prevent connection starvation.\n4. Verify pg_stat_activity on PostgreSQL to identify long-running idle in transaction states.\n\n**Verification Checkpoints:**\n- Confirm pool active connections drop below 70% under peak load.\n- No ConnectionTimeout exceptions in application logs over 15 minutes.",
+    "category": "Database Connection Failures",
+    "fingerprint": "database_connection_failures:pool_exhaustion:942e0a69",
+    "source_ticket_id": "inc-bae1d9",
+    "approved_by": "Test SRE",
+    "verified_fix": true,
+    "created_at": "2026-11-20T10:11:29.966863",
+    "provenance": {
+      "system": "IncidentIQ",
+      "dag_node": "verification_agent",
+      "human_gate_passed": true,
+      "timestamp": "2026-11-20T10:11:29.966863"
+    }
+  }
+]

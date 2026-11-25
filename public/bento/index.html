@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Maya Lind — Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --page: #EEECE8;
+      --card-bg: #F5F3EF;
+      --hairline: rgba(0, 0, 0, 0.07);
+      --ink: #1E1C1A;
+      --secondary: #77736E;
+      --muted: #A7A39D;
+      --chips: #E9E6E1;
+      --orange: #EE6A1F;
+      --green: #3BC45E;
+      --dark: #2A2624;
+      --radius-card: 14px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--page);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .viewport {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--page);
+      overflow: hidden;
+    }
+
+    /* 1440x960 desktop stage */
+    .stage {
+      position: relative;
+      width: 1440px;
+      height: 960px;
+      transform-origin: center center;
+      transform: scale(min(calc(100vw / 1440), calc(100vh / 960)));
+      flex-shrink: 0;
+    }
+
+    /* AVATAR */
+    .avatar-img {
+      position: absolute;
+      left: 136px;
+      top: 82px;
+      width: 145px;
+      height: 145px;
+      border-radius: 11px;
+      object-fit: cover;
+      background-color: var(--orange);
+    }
+
+    /* HEADLINE */
+    .intro-headline {
+      position: absolute;
+      left: 321px;
+      top: 92px;
+      width: 900px;
+      font-size: 39.5px;
+      line-height: 46px;
+      font-weight: 520;
+      letter-spacing: -0.021em;
+      color: var(--ink);
+    }
+
+    .intro-headline .muted-text {
+      color: var(--muted);
+    }
+
+    /* BIO */
+    .intro-bio {
+      position: absolute;
+      left: 321px;
+      top: 203px;
+      width: 790px;
+      font-size: 20.5px;
+      line-height: 31px;
+      font-weight: 400;
+      color: var(--secondary);
+    }
+
+    /* VOICE NOTE PILL */
+    .voice-pill {
+      position: absolute;
+      left: 321px;
+      top: 287px;
+      width: 495px;
+      height: 53px;
+      border-radius: 999px;
+      background: #FAF9F6;
+      border: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      padding: 0 18px 0 12px;
+      gap: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .voice-play-btn {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background: var(--orange);
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .voice-play-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .voice-waves {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 28px;
+      flex-grow: 1;
+    }
+
+    .wave-bar {
+      width: 2px;
+      border-radius: 999px;
+      background: var(--muted);
+      transition: background 0.15s ease, transform 0.1s ease;
+      transform-origin: center bottom;
+    }
+
+    .wave-bar.is-played {
+      background: var(--ink);
+    }
+
+    .wave-bar.is-loud {
+      background: var(--orange);
+    }
+
+    .voice-timer {
+      font-size: 13.5px;
+      font-variant-numeric: tabular-nums;
+      color: var(--secondary);
+      font-weight: 500;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* AVAILABLE PILL */
+    .available-pill {
+      position: absolute;
+      left: 841px;
+      top: 287px;
+      width: 174px;
+      height: 53px;
+      border-radius: 999px;
+      background: #FAF9F6;
+      border: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .halo-wrap {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dot-green {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .halo-ring {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--green);
+      opacity: 0.8;
+      animation: pulseHalo 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    @keyframes pulseHalo {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+
+    /* BENTO CARDS BASE */
+    .bento-card {
+      position: absolute;
+      background: var(--card-bg);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-card);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bento-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .chip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--chips);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ROW 1 CARDS */
+    /* 1. Experience */
+    .card-experience {
+      left: 76px;
+      top: 390px;
+      width: 370px;
+      height: 258px;
+      padding: 18px 22px;
+    }
+
+    .timeline-container {
+      position: relative;
+      margin-top: 14px;
+      height: 172px;
+      overflow: hidden;
+      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    }
+
+    .timeline-track {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      will-change: transform;
+    }
+
+    .timeline-line-bar {
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 1.5px;
+      background: var(--dark);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 0.5px;
+      top: 4px;
+      width: 8.5px;
+      height: 8.5px;
+      border-radius: 50%;
+      background: var(--dark);
+    }
+
+    .timeline-title {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .timeline-years {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* 2. What I'm Listening */
+    .card-music {
+      left: 463px;
+      top: 390px;
+      width: 513px;
+      height: 258px;
+      padding: 18px 24px;
+    }
+
+    .music-body {
+      display: flex;
+      gap: 24px;
+      margin-top: 14px;
+    }
+
+    .album-art {
+      width: 165px;
+      height: 173px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background-color: #f7d6e0;
+    }
+
+    .music-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .track-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .track-artist {
+      font-size: 14.5px;
+      color: var(--secondary);
+      margin-bottom: 22px;
+    }
+
+    .progress-track {
+      width: 243px;
+      height: 3.5px;
+      background: var(--chips);
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: var(--ink);
+      width: 18%;
+      border-radius: 999px;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      width: 243px;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ctrl-play {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+    }
+
+    /* 3. What I'm Reading */
+    .card-reading {
+      left: 993px;
+      top: 390px;
+      width: 371px;
+      height: 258px;
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reading-content {
+      margin-top: 16px;
+      position: relative;
+      flex: 1;
+    }
+
+    .book-title {
+      font-size: 25.5px;
+      line-height: 35px;
+      font-weight: 500;
+      color: var(--ink);
+      max-width: 160px;
+    }
+
+    .book-author {
+      font-size: 15px;
+      color: var(--secondary);
+      margin-top: 4px;
+    }
+
+    .book-cover-img {
+      position: absolute;
+      right: -8px;
+      bottom: -18px;
+      width: 165px;
+      height: 230px;
+      object-fit: contain;
+      transform: rotate(5deg);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    /* ROW 2 CARDS */
+    /* 4. Map */
+    .card-map {
+      left: 76px;
+      top: 665px;
+      width: 370px;
+      height: 242px;
+      padding: 11px;
+    }
+
+    .map-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .map-bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #e5e5e0;
+    }
+
+    .map-center-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 27px;
+      font-weight: 500;
+      color: rgba(30, 28, 26, 0.45);
+      letter-spacing: -0.01em;
+      pointer-events: none;
+    }
+
+    .map-bottom-chip {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* 5. Football Photo */
+    .card-photo {
+      left: 463px;
+      top: 665px;
+      width: 330px;
+      height: 242px;
+      padding: 11px;
+    }
+
+    .photo-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #ced0ce;
+    }
+
+    .photo-caption-pill {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .ball-icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+
+    /* 6. How I Work */
+    .card-workflow {
+      left: 810px;
+      top: 665px;
+      width: 554px;
+      height: 242px;
+      padding: 22px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .step-segmented-control {
+      display: flex;
+      align-items: center;
+      background: var(--chips);
+      border-radius: 999px;
+      padding: 4px;
+      height: 40px;
+      position: relative;
+      width: fit-content;
+      gap: 4px;
+    }
+
+    .step-pill-indicator {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      border-radius: 999px;
+      background: var(--dark);
+      transition: left 0.42s cubic-bezier(0.16, 1, 0.3, 1), width 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+    }
+
+    .step-btn {
+      position: relative;
+      z-index: 2;
+      background: none;
+      border: none;
+      padding: 0 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: color 0.3s ease;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .step-btn.is-active {
+      color: #ffffff;
+    }
+
+    .step-text-display {
+      position: relative;
+      min-height: 84px;
+      overflow: hidden;
+    }
+
+    .step-slide {
+      transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-heading {
+      font-size: 29px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 15px;
+      line-height: 22px;
+      color: var(--secondary);
+      max-width: 480px;
+    }
+
+    /* ENTRANCE ANIMATION */
+    .entrance-item {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .entrance-item.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* NARROW SCREENS (<= 820px) */
+    @media (max-width: 820px) {
+      html, body {
+        overflow-y: auto;
+        height: auto;
+      }
+      .viewport {
+        position: relative;
+        display: block;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+      }
+      .stage {
+        width: 100%;
+        height: auto;
+        transform: none;
+        padding: 32px 20px 64px;
+        box-sizing: border-box;
+      }
+      .avatar-img {
+        position: static;
+        margin-bottom: 24px;
+      }
+      .intro-headline {
+        position: static;
+        width: 100%;
+        font-size: 32px;
+        line-height: 38px;
+        margin-bottom: 16px;
+      }
+      .intro-bio {
+        position: static;
+        width: 100%;
+        font-size: 18px;
+        line-height: 26px;
+        margin-bottom: 24px;
+      }
+      .voice-pill {
+        position: static;
+        width: 100%;
+        margin-bottom: 16px;
+      }
+      .available-pill {
+        position: static;
+        width: 100%;
+        margin-bottom: 32px;
+      }
+      .bento-card {
+        position: static !important;
+        width: 100% !important;
+        margin-bottom: 20px;
+        height: auto !important;
+        min-height: 240px;
+      }
+      .music-body {
+        flex-direction: column;
+      }
+      .card-reading {
+        min-height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden Element driving One Clock Animation -->
+  <div id="clockAnchor" style="display:none;" aria-hidden="true"></div>
+
+  <main class="viewport">
+    <div class="stage">
+
+      <!-- AVATAR -->
+      <img
+        class="avatar-img entrance-item"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/60582a62-dbab-4bc1-9169-07db0fcb51b1.jpg"
+        alt="Maya Lind avatar"
+        loading="eager"
+      />
+
+      <!-- INTRO HEADLINE -->
+      <h1 class="intro-headline entrance-item">
+        Hi I’m Maya Lind — I’m a Product Designer at Fieldnote.<span class="muted-text"> Previously at Orbit.</span>
+      </h1>
+
+      <!-- INTRO BIO -->
+      <p class="intro-bio entrance-item">
+        I am a seasoned product designer with 5 years of experience specializing in crafting creative tools solutions and empowering creatives.
+      </p>
+
+      <!-- VOICE NOTE PILL -->
+      <div class="voice-pill entrance-item" aria-label="Audio voice note">
+        <button id="voiceBtn" class="voice-play-btn" type="button" aria-label="Play voice note">
+          <svg id="voicePlayIcon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M3 2l7 4-7 4V2z"/>
+          </svg>
+          <svg id="voicePauseIcon" width="12" height="12" viewBox="0 0 12 12" fill="currentColor" style="display:none;">
+            <path d="M3 2h2v8H3V2zm4 0h2v8H7V2z"/>
+          </svg>
+        </button>
+
+        <div id="voiceWaves" class="voice-waves" aria-hidden="true">
+          <!-- 78 waveform bars injected via JS -->
+        </div>
+
+        <span id="voiceTimer" class="voice-timer">0:00</span>
+      </div>
+
+      <!-- AVAILABLE FOR WORK PILL -->
+      <div class="available-pill entrance-item">
+        <div class="halo-wrap" aria-hidden="true">
+          <div class="halo-ring"></div>
+          <div class="dot-green"></div>
+        </div>
+        <span>Available for Work</span>
+      </div>
+
+      <!-- BENTO GRID -->
+      <!-- ROW 1 -->
+      <!-- Card 1: Experience -->
+      <article class="bento-card card-experience entrance-item">
+        <div class="chip-badge">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M5 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
+          </svg>
+          <span>Experience</span>
+        </div>
+
+        <div class="timeline-container">
+          <div class="timeline-line-bar" aria-hidden="true"></div>
+          <div id="timelineTrack" class="timeline-track">
+            <!-- Repeated twice for infinite seamless drift -->
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Fieldnote — Product Designer</span>
+              <span class="timeline-years">2023 – now</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Speaker, Form Conf</span>
+              <span class="timeline-years">2024</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Freelance</span>
+              <span class="timeline-years">2023</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Studio Kettle &amp; Co</span>
+              <span class="timeline-years">2020 – 2023</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Orbit — Design Lead</span>
+              <span class="timeline-years">2018 – 2020</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Product Designer</span>
+              <span class="timeline-years">2020 – 2023</span>
+            </div>
+
+            <!-- Double -->
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Fieldnote — Product Designer</span>
+              <span class="timeline-years">2023 – now</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Speaker, Form Conf</span>
+              <span class="timeline-years">2024</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Freelance</span>
+              <span class="timeline-years">2023</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Studio Kettle &amp; Co</span>
+              <span class="timeline-years">2020 – 2023</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Orbit — Design Lead</span>
+              <span class="timeline-years">2018 – 2020</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <span class="timeline-title">Product Designer</span>
+              <span class="timeline-years">2020 – 2023</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: What I'm Listening -->
+      <article class="bento-card card-music entrance-item">
+        <div class="chip-badge">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M6 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm10-3a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+            <path d="M6 13V2l10-1v9"/>
+          </svg>
+          <span>What I’m listening</span>
+        </div>
+
+        <div class="music-body">
+          <img
+            class="album-art"
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/ed0c3ef0-5a75-4933-9f3c-6afbea39e2ec.jpg"
+            alt="Album cover"
+          />
+
+          <div class="music-meta">
+            <h3 class="track-title">SLOW BLOOM</h3>
+            <p class="track-artist">Juno Vale</p>
+
+            <div class="progress-track" aria-hidden="true">
+              <div id="songProgress" class="progress-fill"></div>
+            </div>
+
+            <div class="time-row">
+              <span id="songTime">00:34</span>
+              <span>3:12</span>
+            </div>
+
+            <div class="music-controls">
+              <button class="ctrl-btn" type="button" aria-label="Previous track">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M3 2h2v12H3V2zm9 0L6 8l6 6V2z"/>
+                </svg>
+              </button>
+              <button id="musicPlayBtn" class="ctrl-btn ctrl-play" type="button" aria-label="Play/Pause music">
+                <svg id="musicPlayIcon" width="13" height="13" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M3 2l7 4-7 4V2z"/>
+                </svg>
+                <svg id="musicPauseIcon" width="13" height="13" viewBox="0 0 12 12" fill="currentColor" style="display:none;">
+                  <path d="M3 2h2v8H3V2zm4 0h2v8H7V2z"/>
+                </svg>
+              </button>
+              <button class="ctrl-btn" type="button" aria-label="Next track">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M13 2h-2v12h2V2zM4 2l6 6-6 6V2z"/>
+                </svg>
+              </button>
+              <button class="ctrl-btn" type="button" aria-label="Volume">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <polygon points="1 5 4 5 8 2 8 14 4 11 1 11" fill="currentColor"/>
+                  <path d="M11 5c1 1.5 1 4.5 0 6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: What I'm Reading -->
+      <article class="bento-card card-reading entrance-item">
+        <div class="chip-badge">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M2 3a2 2 0 0 1 2-2h10v12H4a2 2 0 0 0-2 2V3z"/>
+          </svg>
+          <span>What I’m reading</span>
+        </div>
+
+        <div class="reading-content">
+          <h2 class="book-title">The Patient Builder</h2>
+          <p class="book-author">Ada Marsh</p>
+          <img
+            class="book-cover-img"
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/b820bd2c-7312-4ac3-8162-76f6d97d4de4.jpg"
+            alt="The Patient Builder by Ada Marsh"
+          />
+        </div>
+      </article>
+
+      <!-- ROW 2 -->
+      <!-- Card 4: Map -->
+      <article class="bento-card card-map entrance-item">
+        <div class="map-inner">
+          <img
+            class="map-bg-img"
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/4f3be2d6-3848-493b-b3d7-5880dac21a63.jpg"
+            alt="Street map of Lisbon"
+          />
+          <div class="map-center-label">Lisbon</div>
+          <div class="map-bottom-chip">
+            <span>Lisbon, Portugal</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Photo -->
+      <article class="bento-card card-photo entrance-item">
+        <div class="photo-inner">
+          <img
+            class="photo-img"
+            src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/9f4e5ca0-844d-4c0a-8665-5cc5024e3281.jpg"
+            alt="Teaching football"
+          />
+          <div class="photo-caption-pill">
+            <span class="ball-icon"></span>
+            <span>I love teaching football</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: How I Work -->
+      <article class="bento-card card-workflow entrance-item">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="chip-badge">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="8" cy="8" r="6"/>
+              <path d="M8 4v4l3 2"/>
+            </svg>
+            <span>How I work</span>
+          </div>
+
+          <!-- 40px Segmented Control -->
+          <div class="step-segmented-control" role="tablist">
+            <div id="stepPill" class="step-pill-indicator"></div>
+            <button class="step-btn is-active" data-step="0" type="button">Step 01</button>
+            <button class="step-btn" data-step="1" type="button">Step 02</button>
+            <button class="step-btn" data-step="2" type="button">Step 03</button>
+            <button class="step-btn" data-step="3" type="button">Step 04</button>
+          </div>
+        </div>
+
+        <div class="step-text-display">
+          <div id="stepSlide" class="step-slide">
+            <h3 id="stepTitle" class="step-heading">01 Discovery Call</h3>
+            <p id="stepDesc" class="step-desc">
+              We will make a 30 minutes free consultation so that I can get to learn about your specific needs and come up with a plan.
+            </p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // --- 1. SEEDED WAVEFORM BARS ---
+      const waveContainer = document.getElementById('voiceWaves');
+      const totalBars = 78;
+      const barHeights = [];
+      for (let i = 0; i < totalBars; i++) {
+        // Seeded heights with 2 louder bursts around bar 22-28 and 54-60
+        let h = 4 + Math.sin(i * 0.38) * 8 + Math.cos(i * 0.8) * 6;
+        if ((i >= 20 && i <= 30) || (i >= 52 && i <= 62)) {
+          h += 12 + Math.sin(i * 0.9) * 8;
+        }
+        h = Math.max(5, Math.min(26, h));
+        barHeights.push(h);
+
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        bar.style.height = h + 'px';
+        waveContainer.appendChild(bar);
+      }
+      const bars = waveContainer.querySelectorAll('.wave-bar');
+
+      // --- 2. ONE MASTER CLOCK via Web Animations API ---
+      const clockEl = document.getElementById('clockAnchor');
+      let masterAnimation;
+      try {
+        masterAnimation = clockEl.animate(
+          [{ opacity: 0 }, { opacity: 1 }],
+          { duration: 100000000, iterations: 1 }
+        );
+      } catch (e) {
+        masterAnimation = { currentTime: 0 };
+      }
+
+      function getClockTime() {
+        return (masterAnimation.currentTime || performance.now()) / 1000;
+      }
+
+      // --- 3. ENTRANCE STAGGER ---
+      const entranceItems = document.querySelectorAll('.entrance-item');
+      entranceItems.forEach((item, idx) => {
+        setTimeout(() => {
+          item.classList.add('is-revealed');
+        }, idx * 80 + 100);
+      });
+
+      // --- 4. VOICE NOTE MOTION ---
+      let voicePlaying = true;
+      let voiceStartTime = 1.3;
+      const voiceDuration = 32.0;
+
+      const voiceBtn = document.getElementById('voiceBtn');
+      const voicePlayIcon = document.getElementById('voicePlayIcon');
+      const voicePauseIcon = document.getElementById('voicePauseIcon');
+      const voiceTimer = document.getElementById('voiceTimer');
+
+      function updateVoiceUI(isPlaying) {
+        voicePlayIcon.style.display = isPlaying ? 'none' : 'block';
+        voicePauseIcon.style.display = isPlaying ? 'block' : 'none';
+      }
+      updateVoiceUI(voicePlaying);
+
+      voiceBtn.addEventListener('click', () => {
+        voicePlaying = !voicePlaying;
+        updateVoiceUI(voicePlaying);
+      });
+
+      // --- 5. MUSIC PROGRESS (SLOW BLOOM) ---
+      let musicPlaying = true;
+      let musicStartTime = getClockTime();
+      const musicStartSeconds = 34; // 00:34
+      const musicTotalSeconds = 192; // 3:12
+
+      const musicPlayBtn = document.getElementById('musicPlayBtn');
+      const musicPlayIcon = document.getElementById('musicPlayIcon');
+      const musicPauseIcon = document.getElementById('musicPauseIcon');
+      const songProgress = document.getElementById('songProgress');
+      const songTime = document.getElementById('songTime');
+
+      musicPlayBtn.addEventListener('click', () => {
+        musicPlaying = !musicPlaying;
+        musicPlayIcon.style.display = musicPlaying ? 'none' : 'block';
+        musicPauseIcon.style.display = musicPlaying ? 'block' : 'none';
+      });
+
+      // --- 6. TIMELINE DRIFT (9px/s seamless loop) ---
+      const timelineTrack = document.getElementById('timelineTrack');
+      // Half track height is 6 items * ~45px = ~270px
+
+      // --- 7. HOW I WORK (AUTO-ADVANCE 1.9s) ---
+      const STEPS = [
+        {
+          num: '01',
+          title: '01 Discovery Call',
+          desc: 'We will make a 30 minutes free consultation so that I can get to learn about your specific needs and come up with a plan.'
+        },
+        {
+          num: '02',
+          title: '02 Strategy & Scope',
+          desc: 'Together we turn what we learned into goals, a clear scope and a timeline, so everyone knows what success looks like.'
+        },
+        {
+          num: '03',
+          title: '03 Design Sprint',
+          desc: 'I explore, prototype and test in focused weekly cycles, sharing progress often so feedback lands early.'
+        },
+        {
+          num: '04',
+          title: '04 Handoff & Support',
+          desc: 'You get polished files, specs and a walkthrough for your team, plus a month of support after launch.'
+        }
+      ];
+
+      let currentStepIdx = 0;
+      let stepHoldUntil = 0;
+      let lastStepSwitchTime = getClockTime();
+
+      const stepBtns = document.querySelectorAll('.step-btn');
+      const stepPill = document.getElementById('stepPill');
+      const stepSlide = document.getElementById('stepSlide');
+      const stepTitle = document.getElementById('stepTitle');
+      const stepDesc = document.getElementById('stepDesc');
+
+      function updateStepPill() {
+        const activeBtn = stepBtns[currentStepIdx];
+        if (activeBtn) {
+          stepPill.style.left = activeBtn.offsetLeft + 'px';
+          stepPill.style.width = activeBtn.offsetWidth + 'px';
+          stepBtns.forEach((b, i) => {
+            b.classList.toggle('is-active', i === currentStepIdx);
+          });
+        }
+      }
+
+      function setStep(newIdx) {
+        if (newIdx === currentStepIdx) return;
+        stepSlide.style.opacity = '0';
+        stepSlide.style.transform = 'translateY(-12px)';
+
+        setTimeout(() => {
+          currentStepIdx = newIdx;
+          stepTitle.textContent = STEPS[currentStepIdx].title;
+          stepDesc.textContent = STEPS[currentStepIdx].desc;
+          updateStepPill();
+
+          stepSlide.style.transform = 'translateY(12px)';
+          stepSlide.offsetHeight; // trigger reflow
+          stepSlide.style.opacity = '1';
+          stepSlide.style.transform = 'translateY(0)';
+        }, 180);
+      }
+
+      stepBtns.forEach((btn, idx) => {
+        btn.addEventListener('click', () => {
+          setStep(idx);
+          stepHoldUntil = getClockTime() + 6.0;
+        });
+      });
+
+      // Init pill position
+      setTimeout(updateStepPill, 50);
+
+      // --- 8. MASTER RAF LOOP (All animations synced to clock) ---
+      function tick() {
+        const t = getClockTime();
+
+        // 1) Voice note playhead
+        if (t >= voiceStartTime && t < voiceStartTime + voiceDuration) {
+          const progress = (t - voiceStartTime) / voiceDuration;
+          const currentBar = Math.floor(progress * totalBars);
+
+          bars.forEach((b, i) => {
+            b.classList.toggle('is-played', i <= currentBar);
+            if (voicePlaying && Math.abs(i - currentBar) <= 2) {
+              const bounce = 1 + Math.sin(t * 12 + i) * 0.45;
+              b.style.transform = `scaleY(${bounce})`;
+            } else {
+              b.style.transform = 'scaleY(1)';
+            }
+          });
+
+          const elapsedSec = Math.floor(t - voiceStartTime);
+          const mins = Math.floor(elapsedSec / 60);
+          const secs = elapsedSec % 60;
+          voiceTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // 2) Song progress
+        if (musicPlaying) {
+          const elapsedMusic = (t - musicStartTime) + musicStartSeconds;
+          const clamped = Math.min(musicTotalSeconds, elapsedMusic % musicTotalSeconds);
+          const pct = (clamped / musicTotalSeconds) * 100;
+          songProgress.style.width = pct + '%';
+
+          const sMins = Math.floor(clamped / 60);
+          const sSecs = Math.floor(clamped % 60);
+          songTime.textContent = `${sMins < 10 ? '0' : ''}${sMins}:${sSecs < 10 ? '0' : ''}${sSecs}`;
+        }
+
+        // 3) Timeline drift (9px/s seamless loop)
+        const loopHeight = 246; // height of one complete set of 6 items
+        const driftY = (t * 9) % loopHeight;
+        timelineTrack.style.transform = `translateY(-${driftY}px)`;
+
+        // 4) How I work auto-advance (every 1.9s unless held)
+        if (t > stepHoldUntil) {
+          if (t - lastStepSwitchTime >= 1.9) {
+            lastStepSwitchTime = t;
+            const nextIdx = (currentStepIdx + 1) % STEPS.length;
+            setStep(nextIdx);
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

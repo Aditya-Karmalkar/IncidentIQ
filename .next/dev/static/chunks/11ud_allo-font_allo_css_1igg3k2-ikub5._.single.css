@@ -1,0 +1,82 @@
+/* [project]/node_modules/.pnpm/allo-font@1.0.3/node_modules/allo-font/allo.css [app-client] (css) */
+@font-face {
+  font-family: Allo;
+  src: url("../media/AlloVariable.0w8m05zlkswb2.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-ThinOblique.00bhpm5uz2v-d.woff2") format("woff2");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-ExtraLightOblique.3z77gg1fp9l68.woff2") format("woff2");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-LightOblique.1vn4k67p18ucg.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-Oblique.406wwg04q7d7p.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-MediumOblique.0-ba_723k5pm8.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-SemiBoldOblique.0tw6wq3h2_2bw.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-BoldOblique.00qsfa2_gxa3r.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-ExtraBoldOblique.1cqzx8me-9rfu.woff2") format("woff2");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Allo;
+  src: url("../media/Allo-BlackOblique.3pphb-l6cloe1.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/*# sourceMappingURL=11ud_allo-font_allo_css_1igg3k2-ikub5._.single.css.map*/
